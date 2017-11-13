@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2017
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Road-Rage-Master", "Road-Rage-Master.csproj", "{CE19B8D5-6FB0-A4BF-F208-5AEAA3685CF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Road-Rage-Master.Editor", "Road-Rage-Master.Editor.csproj", "{D8670186-DC27-675E-AB12-F6880EDE3331}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE19B8D5-6FB0-A4BF-F208-5AEAA3685CF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE19B8D5-6FB0-A4BF-F208-5AEAA3685CF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE19B8D5-6FB0-A4BF-F208-5AEAA3685CF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE19B8D5-6FB0-A4BF-F208-5AEAA3685CF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8670186-DC27-675E-AB12-F6880EDE3331}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8670186-DC27-675E-AB12-F6880EDE3331}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8670186-DC27-675E-AB12-F6880EDE3331}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8670186-DC27-675E-AB12-F6880EDE3331}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
