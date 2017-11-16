@@ -226,6 +226,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts 1\CarController.cs" />
+    <Compile Include="Assets\Scripts 1\ControllerGrabObject.cs" />
     <Compile Include="Assets\Scripts 1\TireToWheel.cs" />
     <Compile Include="Assets\Scripts\Driving.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />

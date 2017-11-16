@@ -52,11 +52,11 @@ namespace Valve.VR.InteractionSystem
             if (speedText != null)
                 speedText.text = "Speed: " + Speed().ToString("f0") + " km/h";
 
-            //Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
+            Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
 
-            float scaledTorque = (2*linearMapping.value - 1) * torque;
+            float scaledTorque = Input.GetAxis("Vertical") * torque;
 
-            Debug.Log((2 * linearMapping.value - 1));
+            Debug.Log(Input.GetAxis("Vertical"));
 
             if (wheelRL.rpm < idealRPM)
                 scaledTorque = Mathf.Lerp(scaledTorque / 10f, scaledTorque, wheelRL.rpm / idealRPM);
@@ -66,8 +66,12 @@ namespace Valve.VR.InteractionSystem
             DoRollBar(wheelFR, wheelFL);
             DoRollBar(wheelRR, wheelRL);
 
-            wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
-            wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+            //wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+            //wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+
+            wheelFR.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
+            wheelFL.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
+            
 
             wheelFR.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
             wheelFL.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
@@ -90,7 +94,7 @@ namespace Valve.VR.InteractionSystem
             }
         }
 
-
+        
         void DoRollBar(WheelCollider WheelL, WheelCollider WheelR)
         {
             WheelHit hit;
