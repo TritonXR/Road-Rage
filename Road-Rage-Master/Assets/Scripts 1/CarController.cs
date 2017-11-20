@@ -52,11 +52,11 @@ namespace Valve.VR.InteractionSystem
             if (speedText != null)
                 speedText.text = "Speed: " + Speed().ToString("f0") + " km/h";
 
-            Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
+            //Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
 
             float scaledTorque = Input.GetAxis("Vertical") * torque;
 
-            Debug.Log(Input.GetAxis("Vertical"));
+           // Debug.Log(Input.GetAxis("Vertical"));
 
             if (wheelRL.rpm < idealRPM)
                 scaledTorque = Mathf.Lerp(scaledTorque / 10f, scaledTorque, wheelRL.rpm / idealRPM);
@@ -77,9 +77,25 @@ namespace Valve.VR.InteractionSystem
             wheelFL.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
             wheelRR.motorTorque = driveMode == DriveMode.Front ? 0 : scaledTorque;
             wheelRL.motorTorque = driveMode == DriveMode.Front ? 0 : scaledTorque;
-
-            if (Input.GetButton("Fire1"))
+            if (Input.GetTouch(14).phase == TouchPhase.Moved)
             {
+                Debug.Log("Left Controller Trigger");
+            }
+            if (Input.GetTouch(15).phase == TouchPhase.Moved)
+            {
+                Debug.Log("Right Controller Trigger");
+          
+            }
+            if (Input.GetButton("Touch"))
+            {
+                Debug.Log("Left/Right Controller Trigger");
+            }
+            
+        
+
+                if (Input.GetButton("Touch"))
+            {
+                
                 wheelFR.brakeTorque = brakeTorque;
                 wheelFL.brakeTorque = brakeTorque;
                 wheelRR.brakeTorque = brakeTorque;
