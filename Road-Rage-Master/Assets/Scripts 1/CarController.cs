@@ -2,12 +2,13 @@
 using UnityEngine.UI;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEngine.Events;
 
 namespace Valve.VR.InteractionSystem
 {
     public class CarController : MonoBehaviour
     {
-
+        public CircularDrive circularDrive;
         public LinearMapping linearMapping;
 
         public float idealRPM = 500f;
@@ -20,6 +21,8 @@ namespace Valve.VR.InteractionSystem
         public WheelCollider wheelRR;
         public WheelCollider wheelRL;
 
+
+
         public float turnRadius = 6f;
         public float torque = 25f;
         public float brakeTorque = 100f;
@@ -30,6 +33,10 @@ namespace Valve.VR.InteractionSystem
         public DriveMode driveMode = DriveMode.Rear;
 
         public Text speedText;
+
+        [HeaderAttribute("Steering Detection")]
+        [Tooltip("Don't Allow Brake")]
+        public UnityEvent onSteering;
 
         void Start()
         {
@@ -54,9 +61,10 @@ namespace Valve.VR.InteractionSystem
 
             //Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
 
-            float scaledTorque = Input.GetAxis("Vertical") * torque;
+            float scaledTorque = Input.GetAxis("RightTriggerSqueeze")  > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0;
+//Debug.Log(Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0);
 
-           // Debug.Log(Input.GetAxis("Vertical"));
+            // Debug.Log(Input.GetAxis("Vertical"));
 
             if (wheelRL.rpm < idealRPM)
                 scaledTorque = Mathf.Lerp(scaledTorque / 10f, scaledTorque, wheelRL.rpm / idealRPM);
@@ -69,37 +77,30 @@ namespace Valve.VR.InteractionSystem
             //wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
             //wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
 
-            wheelFR.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
-            wheelFL.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
-            
+            //wheelFR.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
+            //wheelFL.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
+
+            wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+            wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+            Debug.Log(wheelFL.steerAngle);
 
             wheelFR.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
             wheelFL.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
             wheelRR.motorTorque = driveMode == DriveMode.Front ? 0 : scaledTorque;
             wheelRL.motorTorque = driveMode == DriveMode.Front ? 0 : scaledTorque;
-            if (Input.GetTouch(14).phase == TouchPhase.Moved)
-            {
-                Debug.Log("Left Controller Trigger");
-            }
-            if (Input.GetTouch(15).phase == TouchPhase.Moved)
-            {
-                Debug.Log("Right Controller Trigger");
-          
-            }
-            if (Input.GetButton("Touch"))
-            {
-                Debug.Log("Left/Right Controller Trigger");
-            }
             
-        
 
-                if (Input.GetButton("Touch"))
+
+            if ( Input.GetKey(KeyCode.Joystick1Button14))
             {
-                
-                wheelFR.brakeTorque = brakeTorque;
-                wheelFL.brakeTorque = brakeTorque;
-                wheelRR.brakeTorque = brakeTorque;
-                wheelRL.brakeTorque = brakeTorque;
+                if (!circularDrive.isSteering)
+                {
+                    wheelFR.brakeTorque = brakeTorque;
+                    wheelFL.brakeTorque = brakeTorque;
+                    wheelRR.brakeTorque = brakeTorque;
+                    wheelRL.brakeTorque = brakeTorque;
+                }
+                //circularDrive.GetCom
             }
             else
             {
@@ -108,9 +109,10 @@ namespace Valve.VR.InteractionSystem
                 wheelRR.brakeTorque = 0;
                 wheelRL.brakeTorque = 0;
             }
+            
         }
 
-        
+
         void DoRollBar(WheelCollider WheelL, WheelCollider WheelR)
         {
             WheelHit hit;

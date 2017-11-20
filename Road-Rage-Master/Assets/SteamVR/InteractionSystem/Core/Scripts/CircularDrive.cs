@@ -75,7 +75,11 @@ namespace Valve.VR.InteractionSystem
 		[Tooltip( "The output angle value of the drive in degrees, unlimited will increase or decrease without bound, take the 360 modulus to find number of rotations" )]
 		public float outAngle;
 
-		private Quaternion start;
+        [HeaderAttribute("Steering Detection")]
+        [Tooltip("Don't Allow Brake")]
+        public UnityEvent onSteering;
+
+        private Quaternion start;
 
 		private Vector3 worldPlaneNormal = new Vector3( 1.0f, 0.0f, 0.0f );
 		private Vector3 localPlaneNormal = new Vector3( 1.0f, 0.0f, 0.0f );
@@ -205,12 +209,15 @@ namespace Valve.VR.InteractionSystem
 			}
 		}
 
+        public bool isSteering;
 
 		//-------------------------------------------------
 		private void OnHandHoverBegin( Hand hand )
 		{
 			ControllerButtonHints.ShowButtonHint( hand, Valve.VR.EVRButtonId.k_EButton_SteamVR_Trigger );
-		}
+            isSteering = true;
+
+        }
 
 
 		//-------------------------------------------------
@@ -223,6 +230,7 @@ namespace Valve.VR.InteractionSystem
 				StartCoroutine( HapticPulses( hand.controller, 1.0f, 10 ) );
 			}
 
+            isSteering = false;
 			driving = false;
 			handHoverLocked = null;
 		}
