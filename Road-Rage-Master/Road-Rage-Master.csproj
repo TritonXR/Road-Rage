@@ -225,6 +225,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Car Script basic\Script\Dot_Truck_Controller.cs" />
     <Compile Include="Assets\Scripts 1\CarController.cs" />
     <Compile Include="Assets\Scripts 1\ControllerGrabObject.cs" />
     <Compile Include="Assets\Scripts 1\TireToWheel.cs" />

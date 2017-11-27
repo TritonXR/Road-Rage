@@ -388,8 +388,11 @@ namespace Valve.VR.InteractionSystem
 			{
 				// Normalize to [0, 1] based on 360 degree windings
 				float flTmp = outAngle / 360.0f;
-				linearMapping.value = flTmp - Mathf.Floor( flTmp );
-			}
+
+                //linearMapping.value = flTmp - Mathf.Floor( flTmp );
+                linearMapping.value = Mathf.Sin(outAngle*Mathf.PI/180);
+
+            }
 
 			UpdateDebugText();
 		}
