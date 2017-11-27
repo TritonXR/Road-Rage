@@ -61,8 +61,8 @@ namespace Valve.VR.InteractionSystem
 
             //Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
 
-            float scaledTorque = Input.GetAxis("RightTriggerSqueeze")  > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0;
-//Debug.Log(Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0);
+            float scaledTorque = Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0;
+            //Debug.Log(Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0);
 
             // Debug.Log(Input.GetAxis("Vertical"));
 
@@ -88,10 +88,10 @@ namespace Valve.VR.InteractionSystem
             wheelFL.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
             wheelRR.motorTorque = driveMode == DriveMode.Front ? 0 : scaledTorque;
             wheelRL.motorTorque = driveMode == DriveMode.Front ? 0 : scaledTorque;
-            
 
 
-            if ( Input.GetKey(KeyCode.Joystick1Button14))
+
+            if (Input.GetKey(KeyCode.Joystick1Button14))
             {
                 if (!circularDrive.isSteering)
                 {
@@ -109,7 +109,7 @@ namespace Valve.VR.InteractionSystem
                 wheelRR.brakeTorque = 0;
                 wheelRL.brakeTorque = 0;
             }
-            
+
         }
 
 
