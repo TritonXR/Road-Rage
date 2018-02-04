@@ -18,9 +18,9 @@ public GameObject panel;
 	// Update is called once per frame
 	void Update () {
 		//if player clicks ___ button, show tool tips panel
-		if(Input.GetKey(KeyCode.JoyStick1Button)){
-			panel.SetActive(true);
-			StartCoroutine(RemoveAfterSeconds(5, panel));
-		}
+		//if(Input.GetKey(KeyCode.JoyStick1Button14)){
+		//	panel.SetActive(true);
+		//	StartCoroutine(RemoveAfterSeconds(5, panel));
+		//}
 	}
 }

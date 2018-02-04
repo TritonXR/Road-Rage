@@ -93,7 +93,7 @@ namespace Valve.VR.InteractionSystem
 
             if (Input.GetKey(KeyCode.Joystick1Button14))
             {
-                if (!circularDrive.isSteering)
+                if (true)
                 {
                     wheelFR.brakeTorque = brakeTorque;
                     wheelFL.brakeTorque = brakeTorque;
