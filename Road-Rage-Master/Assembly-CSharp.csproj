@@ -62,11 +62,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Car Script basic\Script\Dot_Truck_Controller.cs" />
-    <Compile Include="Assets\lightMotion.cs" />
     <Compile Include="Assets\Scripts 1\CarController.cs" />
     <Compile Include="Assets\Scripts 1\ControllerGrabObject.cs" />
+    <Compile Include="Assets\Scripts 1\Driving.cs" />
+    <Compile Include="Assets\Scripts 1\lightMotion.cs" />
     <Compile Include="Assets\Scripts 1\TireToWheel.cs" />
-    <Compile Include="Assets\Scripts\Driving.cs" />
+    <Compile Include="Assets\Scripts 1\ToolTipsMotion.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_GazeTracker.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_LaserPointer.cs" />
     <Compile Include="Assets\SteamVR\Extras\SteamVR_Teleporter.cs" />
@@ -169,7 +170,6 @@
     <Compile Include="Assets\SteamVR\Scripts\SteamVR_TrackedObject.cs" />
     <Compile Include="Assets\SteamVR\Scripts\SteamVR_UpdatePoses.cs" />
     <Compile Include="Assets\SteamVR\Scripts\SteamVR_Utils.cs" />
-    <Compile Include="Assets\ToolTipsMotion.cs" />
     <None Include="Assets\SteamVR\Resources\SteamVR_Fade.shader" />
     <None Include="Assets\SteamVR\Resources\SteamVR_ClearAll.shader" />
     <None Include="Assets\SteamVR\InteractionSystem\Hints\Shaders\ControllerButtonHints.shader" />
