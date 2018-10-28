@@ -74,11 +74,11 @@ namespace Valve.VR.InteractionSystem
             DoRollBar(wheelFR, wheelFL);
             DoRollBar(wheelRR, wheelRL);
 
-            //wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
-            //wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+            wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
+            wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
 
-            //wheelFR.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
-            //wheelFL.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
+            wheelFR.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
+            wheelFL.steerAngle = -(2 * linearMapping.value - 1) * turnRadius;
 
             wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
             wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
