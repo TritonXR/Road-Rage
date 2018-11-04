@@ -16,7 +16,8 @@ public class Driving : MonoBehaviour {
 	void Update () {
         float motor = maxMotorTorque * 1;
         float steering = maxSteeringAngle * 0;
-
+        Debug.Log("steering" + steering);
+        Debug.Log("motor" + motor);
         foreach (AxleInfo axleInfo in axleInfos)
         {
             if (axleInfo.steering)

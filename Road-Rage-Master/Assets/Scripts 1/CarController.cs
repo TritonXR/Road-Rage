@@ -59,12 +59,12 @@ namespace Valve.VR.InteractionSystem
             if (speedText != null)
                 speedText.text = "Speed: " + Speed().ToString("f0") + " km/h";
 
-            //Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
+            Debug.Log ("Speed: " + (wheelRR.radius * Mathf.PI * wheelRR.rpm * 60f / 1000f) + "km/h    RPM: " + wheelRL.rpm);
 
             float scaledTorque = Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0;
-            //Debug.Log(Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0);
+            Debug.Log(Input.GetAxis("RightTriggerSqueeze") > 0.05 ? Input.GetAxis("RightTriggerSqueeze") * torque : 0);
 
-            // Debug.Log(Input.GetAxis("Vertical"));
+            Debug.Log(Input.GetAxis("Vertical"));
 
             if (wheelRL.rpm < idealRPM)
                 scaledTorque = Mathf.Lerp(scaledTorque / 10f, scaledTorque, wheelRL.rpm / idealRPM);
@@ -82,7 +82,7 @@ namespace Valve.VR.InteractionSystem
 
             wheelFR.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
             wheelFL.steerAngle = Input.GetAxis("Horizontal") * turnRadius;
-            Debug.Log(wheelFL.steerAngle);
+            //Debug.Log(wheelFL.steerAngle);
 
             wheelFR.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
             wheelFL.motorTorque = driveMode == DriveMode.Rear ? 0 : scaledTorque;
