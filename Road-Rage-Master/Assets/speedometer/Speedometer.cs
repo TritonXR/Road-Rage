@@ -26,11 +26,20 @@ public class Speedometer : MonoBehaviour {
 	}
     
     void ChangeSpeed(float speed) {
-        motorspeed = Mathf.Abs(truck_controller.motor1 /15);
+        motorspeed = truck_controller.carVelocity.magnitude;
         this.speed = motorspeed;
         float fill_amount = MIN_FILL_AMOUNT + (speed / TOTAL_SPEED) * TOTAL_FILL_AMOUNT;
         bar.fillAmount = fill_amount;
-        speedText.text = (int)speed+"";
+
+        if( this.speed <= 2)
+        {
+            speedText.text = "0";
+        }
+        else
+        {
+            speedText.text = (int)speed + "";
+        }
+        //speedText.text = (int)speed+"";
     }
     /*float LimitedSpeed(float speed) {
         if (speed > MAX_SPEED) return MAX_SPEED;
