@@ -9,9 +9,9 @@ using UnityEngine;
  * 
  */
 public class Wheel : MonoBehaviour {
-    const int NONE_IND  = 0;
+    const int CONTR_IND_DIFF  = 3;
     const int LEFT_IND  = 1;
-    const int RIGHT_IND = 2;
+    const int RIGHT_IND = 0;
     private Collider ourCollider = null;
 
     public float rotSpeed = 1f;
@@ -19,8 +19,7 @@ public class Wheel : MonoBehaviour {
     //currController
     public SteamVR_TrackedObject controller_left;
     public SteamVR_TrackedObject controller_right;
-    private int current_input_index = NONE_IND;
-
+    
     private SteamVR_Controller.Device device, device_l, device_r;
     private Vector3 pos_l, pos_r;
     private bool[] triggerEntered = { false, false, false };
@@ -34,14 +33,14 @@ public class Wheel : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
-        ourCollider = GetComponent<Collider>();
+        ourCollider = GetComponentInChildren<Collider>();
         if (!ourCollider) Debug.Log("collider is null");
 
         // set our controller device indices
         controller_left.SetDeviceIndex(LEFT_IND);
         controller_right.SetDeviceIndex(RIGHT_IND);
-        Debug.Log("Left device index: " + controller_left.index);
-        Debug.Log("Right device index: " + controller_right.index);
+        Debug.Log("Left device index: " + (int)controller_left.index);
+        Debug.Log("Right device index: " + (int)controller_right.index);
 
     }
 
@@ -65,13 +64,15 @@ public class Wheel : MonoBehaviour {
      *  b) having a controller's trigger pressed means exactly what it implies as the front trigger being
      *      pressed/held down
      *  c) when a controller is both in proximity and with trigger pressed it is primed
+     *  
+     *  Note: controller index is changed to right:3 and left:4 afterwards but it is fine as long as we dont use LEFT_IND and RIGHT_IND in it's place
      * 
      */
 
     //private Vector3 db_v1 = new Vector3(0, 1, 0);
-    //private Vector3 db_v2 = new Vector3(0, -1, 0);
+    //private Vector3 db_v2 = new Vector3(1, 0, 0);
     void Update () {
-        //db_v1 = RotateFromTo(db_v1, db_v2) * db_v1;
+        //RotateFromTo(db_v1, db_v2);
         
         device_l = SteamVR_Controller.Input((int)controller_left.index);
         device_r = SteamVR_Controller.Input((int)controller_right.index);
@@ -92,7 +93,7 @@ public class Wheel : MonoBehaviour {
         // if we aren't in proximity then the trigger has exited the collider
         if (!proximity[LEFT_IND]) triggerEntered[LEFT_IND] = false;
         if (!proximity[RIGHT_IND]) triggerEntered[RIGHT_IND] = false;
-
+        
 
 
         //place pos_l,pos_r as a vector relative to transform.position on a plane with the axis of rotation
@@ -123,10 +124,13 @@ public class Wheel : MonoBehaviour {
          *      occurrence that both controllers are primed in the same frame
          */
         // check left primed
-        if (proximity[LEFT_IND] && device_l.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+        if (proximity[LEFT_IND] && device_l.GetPress(SteamVR_Controller.ButtonMask.Trigger))
         {
+            Debug.Log("ENTERED PRIME IF STATEMENT " + primed[LEFT_IND]);
             if (!primed[LEFT_IND])
             {
+                Debug.Log("IIIIIIIIIIIIIIIIIIIIII set left primed to true");
+
                 primed[LEFT_IND] = true;
                 device = device_l;
                 ////////////////////// is there a difference between just calling 
@@ -141,10 +145,12 @@ public class Wheel : MonoBehaviour {
         }
 
         // check right primed
-        if (proximity[RIGHT_IND] && device_r.GetPressDown(SteamVR_Controller.ButtonMask.Trigger))
+        if (proximity[RIGHT_IND] && device_r.GetPress(SteamVR_Controller.ButtonMask.Trigger))
         {
+            Debug.Log("ENTERED PRIME IF STATEMENT " + primed[RIGHT_IND]);
             if (!primed[RIGHT_IND])
             {
+                Debug.Log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII set right primed to true");
                 primed[RIGHT_IND] = true;
                 device = device_r;
                 //results in relative vector3
@@ -154,6 +160,7 @@ public class Wheel : MonoBehaviour {
         }
         else
         {
+            //Debug.Log("DID NOT ENTER PRIME IF STATEMENT " + primed[RIGHT_IND] + " " + device_r.GetPress(SteamVR_Controller.ButtonMask.Trigger));
             primed[RIGHT_IND] = false;
         }
 
@@ -161,8 +168,35 @@ public class Wheel : MonoBehaviour {
             device = null;
         }
 
+
+        ///////////////////////////////////DEBUG STATEMENTS/////////////////////////////
+        if (device_l.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+        {
+            string s = "left: " + (int)controller_left.index + "\n";
+            s += "device: " + (int)controller_left.index + " " + (int)controller_right.index + "\n";
+            s += "proximity: " + proximity[LEFT_IND] + " " + proximity[RIGHT_IND] + "\n";
+            s += "triggerEntered: " + triggerEntered[LEFT_IND] + " " + triggerEntered[RIGHT_IND] + "\n";
+            s += "primed: " + primed[LEFT_IND] + " " + primed[RIGHT_IND] + "\n";
+
+            Debug.Log(s);
+        }
+        if (device_r.GetPress(SteamVR_Controller.ButtonMask.Trigger))
+        {
+            string s = "right: " + (int)controller_right.index + "\n";
+            s += "device: " + (int)controller_left.index + " " + (int)controller_right.index + "\n";
+            s += "proximity: " + proximity[LEFT_IND] + " " + proximity[RIGHT_IND] + "\n";
+            s += "triggerEntered: " + triggerEntered[LEFT_IND] + " " + triggerEntered[RIGHT_IND] + "\n";
+            s += "primed: " + primed[LEFT_IND] + " " + primed[RIGHT_IND] + "\n";
+
+            Debug.Log(s);
+        }
+        ///////////////////////////////END DEBUG STATEMENTS/////////////////////////////
+        ///
+
+        
         // if there is a current controller
         if (device != null) {
+            Debug.Log("AAAAAAAAAAAAAAAAAAAAA device identified");
             // newPos is the relative vector of the anchor of the wheel pointing to the closest point on the collider
             Vector3 newPos = (device.index == LEFT_IND ? pos_l : pos_r);
             
@@ -170,20 +204,36 @@ public class Wheel : MonoBehaviour {
             grabPoint = RotateFromTo(grabPoint, newPos) * grabPoint;
 
         }
+        //Debug.Log("end update loop");
 	}
 
     /**
      * called when another collider enters this object(the wheel) collider
      * if other collider is of a controller, identify that it has activated a triggerEnter
      */
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
+        //Debug.Log("AAAAAAAAAAAA trigger entered");
         //check if the collider entering is a steam controller
         SteamVR_TrackedObject controller;
         if (controller = other.GetComponent<SteamVR_TrackedObject>()) {
-            Debug.Log("Is controller: "+(int)controller.index);
+            Debug.Log("Trigger Entered: "+(int)controller.index);
             //sets current controller to the gameobject that holds Collider other
-            triggerEntered[(int)controller.index] = true;
+            int ind = 2;
+            if (controller.index == controller_left.index)
+            {
+                Debug.Log("LEFT TRIGGER ENTERED");
+                ind = LEFT_IND;
+            }
+            else if (controller.index == controller_right.index)
+            {
+                Debug.Log("RIGHT TRIGGER ENTERED");
+                ind = RIGHT_IND;
+            }
+            else Debug.Log("no matching controller index");
+
+
+            triggerEntered[ind] = true;
         }
     }
 
