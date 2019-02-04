@@ -245,10 +245,11 @@ public class Wheel : MonoBehaviour {
      * Note: due to the rotation speed, the wheel will only rotate in the direction of the rotation
      * from "from" to "to" and won't do the full rotation(see Quaternion.Lerp)
      */
-    private Quaternion RotateFromTo(Vector3 from, Vector3 to) {
+    private Quaternion RotateFromTo(Vector3 from, Vector3 to) {   
         Quaternion rot = Quaternion.FromToRotation(from, to);
         rot = Quaternion.Lerp(Quaternion.identity, rot, rotSpeed * Time.deltaTime);
         transform.rotation = rot * transform.rotation;
+       // transform.rotation = transform.rotation * Quaternion.Euler(0, 0, 1);
         return rot;
     }
 }
