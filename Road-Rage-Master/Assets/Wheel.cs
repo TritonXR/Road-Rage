@@ -196,7 +196,7 @@ public class Wheel : MonoBehaviour {
         
         // if there is a current controller
         if (device != null) {
-            Debug.Log("AAAAAAAAAAAAAAAAAAAAA device identified");
+            //Debug.Log("AAAAAAAAAAAAAAAAAAAAA device identified");
             // newPos is the relative vector of the anchor of the wheel pointing to the closest point on the collider
             Vector3 newPos = (device.index == LEFT_IND ? pos_l : pos_r);
             
@@ -213,7 +213,7 @@ public class Wheel : MonoBehaviour {
      */
     void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("AAAAAAAAAAAA trigger entered");
+        Debug.Log("AAAAAAAAAAAA trigger entered");
         //check if the collider entering is a steam controller
         SteamVR_TrackedObject controller;
         if (controller = other.GetComponent<SteamVR_TrackedObject>()) {
@@ -245,10 +245,11 @@ public class Wheel : MonoBehaviour {
      * Note: due to the rotation speed, the wheel will only rotate in the direction of the rotation
      * from "from" to "to" and won't do the full rotation(see Quaternion.Lerp)
      */
-    private Quaternion RotateFromTo(Vector3 from, Vector3 to) {
+    private Quaternion RotateFromTo(Vector3 from, Vector3 to) {   
         Quaternion rot = Quaternion.FromToRotation(from, to);
         rot = Quaternion.Lerp(Quaternion.identity, rot, rotSpeed * Time.deltaTime);
         transform.rotation = rot * transform.rotation;
+       // transform.rotation = transform.rotation * Quaternion.Euler(0, 0, 1);
         return rot;
     }
 }
