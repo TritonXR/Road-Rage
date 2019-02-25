@@ -248,7 +248,7 @@ public class Wheel : MonoBehaviour {
     private Quaternion RotateFromTo(Vector3 from, Vector3 to) {   
         Quaternion rot = Quaternion.FromToRotation(from, to);
         rot = Quaternion.Lerp(Quaternion.identity, rot, rotSpeed * Time.deltaTime);
-        transform.rotation = rot * transform.rotation;
+        transform.localRotation = rot * transform.localRotation;
        // transform.rotation = transform.rotation * Quaternion.Euler(0, 0, 1);
         return rot;
     }
