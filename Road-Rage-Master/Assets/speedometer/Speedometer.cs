@@ -15,6 +15,7 @@ public class Speedometer : MonoBehaviour {
     private float motorspeed;
 
     public Text speedText;
+    public Text scoreText;
     public Image bar;
     public Dot_Truck_Controller truck_controller;
     public float speed = 0;
@@ -38,8 +39,10 @@ public class Speedometer : MonoBehaviour {
         else
         {
             speedText.text = (int)speed + "";
+            
         }
         //speedText.text = (int)speed+"";
+        scoreText.text = "Score: " + truck_controller.points;
     }
     /*float LimitedSpeed(float speed) {
         if (speed > MAX_SPEED) return MAX_SPEED;
