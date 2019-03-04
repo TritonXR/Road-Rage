@@ -20,6 +20,8 @@ public class wheel2 : MonoBehaviour
     public float rotSpeed = 1f;
 
     //currController
+    public GameObject carRel;
+
     public SteamVR_TrackedObject controller_left;
     public SteamVR_TrackedObject controller_right;
     public GameObject grabPoint;
@@ -83,8 +85,11 @@ public class wheel2 : MonoBehaviour
     //private Vector3 db_v2 = new Vector3(1, 0, 0);
     void Update()
     {
-        //RotateFromTo(db_v1, db_v2);
 
+        this.transform.forward = -carRel.transform.forward;
+        //RotateFromTo(db_v1, db_v2);
+        Debug.Log("grabpoint: " + grabPoint.transform.position);
+        Debug.Log("topoint: " + toPoint.transform.position);
         device_l = SteamVR_Controller.Input((int)controller_left.index);
         device_r = SteamVR_Controller.Input((int)controller_right.index);
 
@@ -173,12 +178,14 @@ public class wheel2 : MonoBehaviour
         // if there is a current controller
         if (controlling != NONE_IND)
         {
-            //Debug.Log("AAAAAAAAAAAAAAAAAAAAA device identified");
+            Debug.Log("AAAAAAAAAAAAAAAAAAAAA device identified");
             // newPos is the relative vector of the anchor of the wheel pointing to the closest point on the collider
             Vector3 newPosRelative = (controlling == LEFT_IND ? pos_l : pos_r);
 
             //rotates wheel and changes grabpoint value in the direction of smallest rotation from grabPoint
             // to newPosRelative
+            //sets localposition to be position with 0 rotation
+            //grabPoint.transform.localPosition = grabPoint.transform.position - this.transform.position;
             RotateTo(newPosRelative);
         }
         //Debug.Log("end update loop");
@@ -262,12 +269,14 @@ public class wheel2 : MonoBehaviour
         
         /*float rot = Vector3.SignedAngle(grabPoint.transform.position, to, this.transform.forward);
         rot = Mathf.Lerp(0.0f, rot, rotSpeed * Time.deltaTime);
-        rotationAngle -= rot;
-        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);
-        toPoint.transform.localPosition = 5*to;
-        print("to" + to);*/
-
-        Quaternion rot = Quaternion.FromToRotation(grabPoint.transform.position, to);
+        
+        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);*/
+        toPoint.transform.position = to + this.transform.position;
+        //to =  to;
+        //rotationAngle -= rot;
+        //print("to" + to);
+        
+        Quaternion rot = Quaternion.FromToRotation(grabPoint.transform.localPosition, to);
         rot = Quaternion.Lerp(Quaternion.identity, rot, rotSpeed * Time.deltaTime);
         transform.localRotation = rot * transform.localRotation;
         // transform.rotation = transform.rotation * Quaternion.Euler(0, 0, 1);
