@@ -37,7 +37,7 @@ public class wheel2 : MonoBehaviour
     private int controlling = NONE_IND;
 
 
-    
+
     public float exitDistance;
 
     // Use this for initialization
@@ -86,10 +86,8 @@ public class wheel2 : MonoBehaviour
     void Update()
     {
 
-        this.transform.forward = -carRel.transform.forward;
+        //this.transform.forward = -carRel.transform.forward;
         //RotateFromTo(db_v1, db_v2);
-        Debug.Log("grabpoint: " + grabPoint.transform.position);
-        Debug.Log("topoint: " + toPoint.transform.position);
         device_l = SteamVR_Controller.Input((int)controller_left.index);
         device_r = SteamVR_Controller.Input((int)controller_right.index);
 
@@ -98,7 +96,7 @@ public class wheel2 : MonoBehaviour
         pos_l = controller_left.gameObject.transform.position;
         pos_r = controller_right.gameObject.transform.position;
 
-        
+
         //place pos_l,pos_r as a vector relative to transform.position on a plane with the axis of rotation
         // as the normal; they are the closest position to their previous world space position to the plane
         // assumes transform.forward lies on axis of rotation
@@ -106,29 +104,28 @@ public class wheel2 : MonoBehaviour
         pos_l = pos_l - Vector3.Project(pos_l, transform.forward);
         pos_r = pos_r - transform.position;
         pos_r = pos_r - Vector3.Project(pos_r, transform.forward);
-        print("left" + pos_l);
-        print("right" + pos_r);
-
-
         
+
+
 
         /* 
          * New way of determining which device is controlling 
          * 1. Device is activated on trigger press and being within range
          * 2. If current device gets released, set the current device to the appropriate controller
          */
-        if (device_l.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[LEFT_IND]) {
+        if (device_l.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[LEFT_IND])
+        {
             device = device_l;
             primed[LEFT_IND] = true;
             controlling = LEFT_IND;
-            grabPoint.transform.localPosition = pos_l;
+            grabPoint.transform.position = pos_l + this.transform.position;
         }
         if (device_r.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[RIGHT_IND])
         {
             device = device_r;
             primed[RIGHT_IND] = true;
             controlling = RIGHT_IND;
-            grabPoint.transform.localPosition = pos_r;
+            grabPoint.transform.position = pos_r + this.transform.position;
         }
 
         /*
@@ -138,7 +135,7 @@ public class wheel2 : MonoBehaviour
          *      controlling the wheel
          *
          */
-        if (!device_l.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !triggerEntered[LEFT_IND]) 
+        if (!device_l.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !triggerEntered[LEFT_IND])
         {
             primed[LEFT_IND] = false;
             if (controlling == LEFT_IND)
@@ -147,6 +144,7 @@ public class wheel2 : MonoBehaviour
                 {
                     device = device_r;
                     controlling = RIGHT_IND;
+                    grabPoint.transform.position = pos_r + this.transform.position;
                 }
                 else
                 {
@@ -164,16 +162,17 @@ public class wheel2 : MonoBehaviour
                 {
                     device = device_l;
                     controlling = LEFT_IND;
+                    grabPoint.transform.position = pos_l + this.transform.position;
                 }
                 else
                 {
                     device = null;
                     controlling = NONE_IND;
                 }
-            } 
+            }
         }
 
-        
+
         // device != null
         // if there is a current controller
         if (controlling != NONE_IND)
@@ -186,10 +185,15 @@ public class wheel2 : MonoBehaviour
             // to newPosRelative
             //sets localposition to be position with 0 rotation
             //grabPoint.transform.localPosition = grabPoint.transform.position - this.transform.position;
-            RotateTo(newPosRelative);
+            // visualize the toPoint in a blue sphere
+            toPoint.transform.position = newPosRelative + this.transform.position;
+
+            RotateGrab2To();
         }
+        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);
+
         //Debug.Log("end update loop");
-   
+
     }
 
     /**
@@ -252,6 +256,7 @@ public class wheel2 : MonoBehaviour
 
             triggerEntered[ind] = false;
         }
+        
     }
 
 
@@ -264,22 +269,28 @@ public class wheel2 : MonoBehaviour
      * Note: due to the rotation speed, the wheel will only rotate in the direction of the rotation
      * from "from" to "to" and won't do the full rotation(see Quaternion.Lerp)
      */
-    private void RotateTo( Vector3 to)
+    private void RotateGrab2To()
     {
         
-        /*float rot = Vector3.SignedAngle(grabPoint.transform.position, to, this.transform.forward);
+        // finding the rotation to rotate by
+        //Quaternion rot = Quaternion.FromToRotation(grabPoint.transform.localPosition, to);
+
+        Vector3 from = grabPoint.transform.position - this.transform.position;
+        Vector3 to = toPoint.transform.position - this.transform.position;
+        float rot = Vector3.SignedAngle(from, to, this.transform.forward);
         rot = Mathf.Lerp(0.0f, rot, rotSpeed * Time.deltaTime);
-        
-        transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);*/
-        toPoint.transform.position = to + this.transform.position;
-        //to =  to;
-        //rotationAngle -= rot;
-        //print("to" + to);
-        
-        Quaternion rot = Quaternion.FromToRotation(grabPoint.transform.localPosition, to);
-        rot = Quaternion.Lerp(Quaternion.identity, rot, rotSpeed * Time.deltaTime);
-        transform.localRotation = rot * transform.localRotation;
-        // transform.rotation = transform.rotation * Quaternion.Euler(0, 0, 1);
-        //return rot;
+
+        rotationAngle += rot;
+
+        //applies a rotation to the entire wheel
+        Debug.Log("to: " + to + "toPoint: " + toPoint.transform.position);
+        Debug.Log("from: " + from + "grabPoint: " + grabPoint.transform.position);
+        Debug.Log(rot);
+
+
+
     }
+
+
 }
+
