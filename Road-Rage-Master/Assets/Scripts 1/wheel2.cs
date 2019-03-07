@@ -15,9 +15,17 @@ public class wheel2 : MonoBehaviour
     const int LEFT_IND = 1;
     const int RIGHT_IND = 0;
     const int NONE_IND = 2;
+    const float DEFAULT_ANGLE = 0.0f;
+
+    public const float MIN_ANGLE = -540.0f;
+    public const float MAX_ANGLE = 540.0f;
+
     private Collider ourCollider = null;
     public float rotationAngle = 0.0f;
+    
+
     public float rotSpeed = 1f;
+    public float rotationDecay;
 
     //currController
     public GameObject carRel;
@@ -35,6 +43,9 @@ public class wheel2 : MonoBehaviour
 
     //whatever IND this variable corresponds to is what controller is controlling the wheel
     private int controlling = NONE_IND;
+
+    //counts which stage of rotation deg
+    //private int rot_dec_cntr = 0;
 
 
 
@@ -190,6 +201,11 @@ public class wheel2 : MonoBehaviour
 
             RotateGrab2To();
         }
+        else {
+            //slowly move back towards the original wheel angle
+            RotateDecay();
+
+        }
         transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);
 
         //Debug.Log("end update loop");
@@ -280,7 +296,22 @@ public class wheel2 : MonoBehaviour
         float rot = Vector3.SignedAngle(from, to, this.transform.forward);
         rot = Mathf.Lerp(0.0f, rot, rotSpeed * Time.deltaTime);
 
-        rotationAngle += rot;
+        float newRotationAngle = rotationAngle + rot;
+
+        //adds limits to the rotation
+        if (newRotationAngle < MIN_ANGLE)
+        {
+            rotationAngle = MIN_ANGLE;
+            //sets grabPoint to the toPoint position, otherwise grabpoint stays in same place and eventually we pass the 180 deg mark and we suddenly rotate back.
+            grabPoint.transform.position = toPoint.transform.position;
+        }
+        else if (newRotationAngle > MAX_ANGLE)
+        {
+            rotationAngle = MAX_ANGLE;
+            grabPoint.transform.position = toPoint.transform.position;
+        }
+        else rotationAngle = newRotationAngle;
+
 
         //applies a rotation to the entire wheel
         Debug.Log("to: " + to + "toPoint: " + toPoint.transform.position);
@@ -289,6 +320,19 @@ public class wheel2 : MonoBehaviour
 
 
 
+    }
+
+    private void RotateDecay() {
+        /*int sign = (rotationAngle < 0) ? -1 : 1;
+        if (sign * rotationAngle < rotationDecay)
+        {
+            rotationAngle = Mathf.Lerp(rotationAngle, DEFAULT_ANGLE, Time.deltaTime);
+        }
+        else {
+            rotationAngle -= sign * rotationDecay;
+        }
+        rotationAngle = Mathf.Lerp(rotationAngle, DEFAULT_ANGLE, rotationDecay * Time.deltaTime);*/
+        rotationAngle = Mathf.Lerp(rotationAngle, DEFAULT_ANGLE, Time.deltaTime);
     }
 
 
