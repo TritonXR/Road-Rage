@@ -13,19 +13,43 @@ public class Speedometer : MonoBehaviour {
     private const float MAX_SPEED = 100.0f;
     private const float TOTAL_SPEED = MAX_SPEED - MIN_SPEED;
     private float motorspeed;
+    private bool over = false;
 
     public Text speedText;
     public Text scoreText;
+    public Text timeText;
+    public Text gameOver;
     public Image bar;
     public Dot_Truck_Controller truck_controller;
     public float speed = 0;
-	
+    public float timeLeft = 30;
+   
+
+    void Start() {
+        gameOver.text = "";
+    }
+
 	// Update is called once per frame
 	void Update () {
         speed++;
         ChangeSpeed(speed);
+        changeTime();
 	}
-    
+
+    void changeTime() {
+        timeLeft -= Time.deltaTime;
+        timeText.text = "Time Left: " + timeLeft;
+        if (timeLeft < 0 && over != true) {
+            GameOver(truck_controller.points); 
+        }
+    }
+
+    void GameOver(int score) {
+        gameOver.text = "Times Up!\n Score: " + score;
+        Debug.Log("Game Over!");
+        over = true;
+    }
+
     void ChangeSpeed(float speed) {
         motorspeed = truck_controller.carVelocity.magnitude;
         this.speed = motorspeed;
@@ -34,12 +58,11 @@ public class Speedometer : MonoBehaviour {
 
         if( this.speed <= 2)
         {
-            speedText.text = "0";
+            speedText.text = "Speed: " + 0;
         }
         else
         {
-            speedText.text = (int)speed + "";
-            
+            speedText.text = "Speed: " + (int)speed + "";
         }
         //speedText.text = (int)speed+"";
         scoreText.text = "Score: " + truck_controller.points;

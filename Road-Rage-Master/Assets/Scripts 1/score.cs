@@ -5,6 +5,8 @@ using UnityEngine;
 public class score : MonoBehaviour {
     public GameObject carScript;
     int times = 0;
+    public int pointValue = 1;
+
 	// Use this for initialization
 	void Start () {
 		
@@ -13,10 +15,17 @@ public class score : MonoBehaviour {
     {
         if(times == 0)
         {
-            carScript.GetComponent<Dot_Truck_Controller>().points++;
-            times++;
+            Dot_Truck_Controller car;
+            car = collision.gameObject.GetComponent<Dot_Truck_Controller>();
+            if (car != null) {
+                car.points += pointValue;
+                times++;
+                Debug.Log("POINTS: " + carScript.GetComponent<Dot_Truck_Controller>().points);
+                Debug.Log("position: " + collision.transform.position);
+            }
+            
         }
-        Debug.Log("POINTS: " + carScript.GetComponent<Dot_Truck_Controller>().points);
+        
         
     }
     // Update is called once per frame
