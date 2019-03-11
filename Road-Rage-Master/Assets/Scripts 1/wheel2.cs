@@ -22,6 +22,8 @@ public class wheel2 : MonoBehaviour
 
     private Collider ourCollider = null;
     public float rotationAngle = 0.0f;
+    public float gas = 0.0f;
+    public Vector3 gas2 = new Vector3(0.0f,0.0f,0.0f);
     
 
     public float rotSpeed = 1f;
@@ -36,7 +38,7 @@ public class wheel2 : MonoBehaviour
     public GameObject toPoint;
 
     private SteamVR_Controller.Device device, device_l, device_r;
-    private Vector3 pos_l, pos_r;
+    private Vector3 pos_l, pos_r,gas_l,gas_r;
     private bool[] triggerEntered = { false, false, false };
     //private bool[] proximity = { false, false, false };
     private bool[] primed = { false, false, false };
@@ -111,14 +113,16 @@ public class wheel2 : MonoBehaviour
         //place pos_l,pos_r as a vector relative to transform.position on a plane with the axis of rotation
         // as the normal; they are the closest position to their previous world space position to the plane
         // assumes transform.forward lies on axis of rotation
-        pos_l = pos_l - transform.position;
-        pos_l = pos_l - Vector3.Project(pos_l, transform.forward);
-        pos_r = pos_r - transform.position;
+        pos_l = pos_l - transform.position - gas2;
+        gas_l = Vector3.Project(pos_l, transform.forward);
+        pos_l = pos_l - gas_l;
+        pos_r = pos_r - transform.position - gas2;
+        gas_r = Vector3.Project(pos_r, transform.forward);
         pos_r = pos_r - Vector3.Project(pos_r, transform.forward);
-        
 
 
 
+        Vector3 _gas = new Vector3();
         /* 
          * New way of determining which device is controlling 
          * 1. Device is activated on trigger press and being within range
@@ -130,6 +134,8 @@ public class wheel2 : MonoBehaviour
             primed[LEFT_IND] = true;
             controlling = LEFT_IND;
             grabPoint.transform.position = pos_l + this.transform.position;
+            _gas = gas_l;
+
         }
         if (device_r.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[RIGHT_IND])
         {
@@ -137,6 +143,7 @@ public class wheel2 : MonoBehaviour
             primed[RIGHT_IND] = true;
             controlling = RIGHT_IND;
             grabPoint.transform.position = pos_r + this.transform.position;
+            _gas = gas_r;
         }
 
         /*
@@ -156,6 +163,7 @@ public class wheel2 : MonoBehaviour
                     device = device_r;
                     controlling = RIGHT_IND;
                     grabPoint.transform.position = pos_r + this.transform.position;
+                    _gas = gas_r;
                 }
                 else
                 {
@@ -174,6 +182,7 @@ public class wheel2 : MonoBehaviour
                     device = device_l;
                     controlling = LEFT_IND;
                     grabPoint.transform.position = pos_l + this.transform.position;
+                    _gas = gas_l;
                 }
                 else
                 {
@@ -197,16 +206,23 @@ public class wheel2 : MonoBehaviour
             //sets localposition to be position with 0 rotation
             //grabPoint.transform.localPosition = grabPoint.transform.position - this.transform.position;
             // visualize the toPoint in a blue sphere
+
+            _gas = (controlling == RIGHT_IND) ? gas_r : gas_l;
+            
             toPoint.transform.position = newPosRelative + this.transform.position;
 
             RotateGrab2To();
+            SetGas(_gas);
         }
         else {
             //slowly move back towards the original wheel angle
             RotateDecay();
-
+            gas2 = new Vector3(0.0f, 0.0f, 0.0f);
         }
+        transform.localPosition = gas2;
         transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);
+
+        Debug.Log("local position: " + transform.localPosition);
 
         //Debug.Log("end update loop");
 
@@ -333,6 +349,18 @@ public class wheel2 : MonoBehaviour
         }
         rotationAngle = Mathf.Lerp(rotationAngle, DEFAULT_ANGLE, rotationDecay * Time.deltaTime);*/
         rotationAngle = Mathf.Lerp(rotationAngle, DEFAULT_ANGLE, Time.deltaTime);
+    }
+    private void SetGas(Vector3 pos) {
+        /*float dist = pos.magnitude;
+        if (dist < 1.0f) {
+            pos = pos - this.transform.forward;
+            gas = pos.magnitude;
+        }*/
+        if(pos.magnitude < 0.1f)        gas2 = -pos;
+        gas = (gas2 + 0.1f*this.transform.forward).magnitude - 0.1f;
+        gas2 = Vector3.Project(gas2, this.transform.forward);
+        gas = gas * 10;
+        print("gas " + gas);
     }
 
 

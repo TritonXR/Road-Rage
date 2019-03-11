@@ -22,7 +22,7 @@ public class Speedometer : MonoBehaviour {
     public Image bar;
     public Dot_Truck_Controller truck_controller;
     public float speed = 0;
-    public float timeLeft = 30;
+    public float timeLeft = 60;
    
 
     void Start() {
@@ -33,12 +33,15 @@ public class Speedometer : MonoBehaviour {
 	void Update () {
         speed++;
         ChangeSpeed(speed);
-        changeTime();
+        if (timeLeft >= 0.0)
+        {
+            changeTime();
+        }
 	}
 
     void changeTime() {
         timeLeft -= Time.deltaTime;
-        timeText.text = "Time Left: " + timeLeft;
+        timeText.text = "Time Left: " + Mathf.Round(timeLeft * 1f) / 1f; ;
         if (timeLeft < 0 && over != true) {
             GameOver(truck_controller.points); 
         }
