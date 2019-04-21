@@ -8,6 +8,8 @@ using Valve.VR;
  * tutorial used for unity vive controls:https://www.youtube.com/watch?v=U-L0COB3lys
  * tutorial used for rotations: https://www.youtube.com/watch?v=nJiFitClnKo
  * 
+ * GETPRESSDOWN true for the frame the button was pressed, false in further frames
+ * 
  */
 public class wheel2 : MonoBehaviour
 {
@@ -24,7 +26,8 @@ public class wheel2 : MonoBehaviour
     public float rotationAngle = 0.0f;
     public float gas = 0.0f;
     public Vector3 gas2 = new Vector3(0.0f,0.0f,0.0f);
-    
+
+    public int mostRecentTouchPad;
 
     public float rotSpeed = 1f;
     public float rotationDecay;
@@ -65,7 +68,7 @@ public class wheel2 : MonoBehaviour
         controller_right.SetDeviceIndex(RIGHT_IND);
         Debug.Log("Left device index: " + (int)controller_left.index);
         Debug.Log("Right device index: " + (int)controller_right.index);
-
+        GetComponent<cakeslice.Outline>().enabled = !GetComponent<cakeslice.Outline>().enabled;
     }
 
     /**
@@ -192,7 +195,10 @@ public class wheel2 : MonoBehaviour
             }
         }
 
-
+        int ind1 = (int)controller_right.index;
+        int ind2 = (int)controller_left.index;
+        //SetGas(_gas);
+        SetGas(ind1, ind2);
         // device != null
         // if there is a current controller
         if (controlling != NONE_IND)
@@ -206,23 +212,25 @@ public class wheel2 : MonoBehaviour
             //sets localposition to be position with 0 rotation
             //grabPoint.transform.localPosition = grabPoint.transform.position - this.transform.position;
             // visualize the toPoint in a blue sphere
+            GetComponent<cakeslice.Outline>().enabled = true;
 
             _gas = (controlling == RIGHT_IND) ? gas_r : gas_l;
             
             toPoint.transform.position = newPosRelative + this.transform.position;
 
             RotateGrab2To();
-            SetGas(_gas);
+          
         }
         else {
             //slowly move back towards the original wheel angle
+            GetComponent<cakeslice.Outline>().enabled = false;
             RotateDecay();
             gas2 = new Vector3(0.0f, 0.0f, 0.0f);
         }
         transform.localPosition = gas2;
         transform.localRotation = Quaternion.Euler(0.0f, 0.0f, rotationAngle);
 
-        Debug.Log("local position: " + transform.localPosition);
+        //Debug.Log("local position: " + transform.localPosition);
 
         //Debug.Log("end update loop");
 
@@ -254,7 +262,6 @@ public class wheel2 : MonoBehaviour
             }
             else Debug.Log("no matching controller index");
 
-
             triggerEntered[ind] = true;
         }
     }
@@ -284,7 +291,6 @@ public class wheel2 : MonoBehaviour
                 ind = RIGHT_IND;
             }
             else Debug.Log("no matching controller index");
-
 
             triggerEntered[ind] = false;
         }
@@ -361,6 +367,64 @@ public class wheel2 : MonoBehaviour
         gas2 = Vector3.Project(gas2, this.transform.forward);
         gas = gas * 10;
         print("gas " + gas);
+        
+    }
+
+    private void SetGas(int rightInd, int leftInd) {
+        Vector2 axis = new Vector2();
+        if (SteamVR_Controller.Input((int)rightInd).GetPressDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+            mostRecentTouchPad = rightInd;
+        }
+        else if (SteamVR_Controller.Input((int)leftInd).GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+        {
+            mostRecentTouchPad = leftInd;
+        }
+
+        if (mostRecentTouchPad == rightInd)
+        {
+            if (SteamVR_Controller.Input(rightInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+            {
+                axis = SteamVR_Controller.Input((int)rightInd).GetAxis();
+            }
+            else {
+                if (SteamVR_Controller.Input(leftInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                {
+                    mostRecentTouchPad = leftInd;
+                    axis = SteamVR_Controller.Input((int)leftInd).GetAxis();
+                }
+                else {
+                    //number that controllers will never index to
+                    mostRecentTouchPad = -99999999;
+                }
+            }
+            Debug.Log("axis: " + axis.y);
+
+        }
+        else if (mostRecentTouchPad == leftInd) {
+            if (SteamVR_Controller.Input(leftInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+            {
+                axis = SteamVR_Controller.Input((int)leftInd).GetAxis();
+            }
+            else
+            {
+                if (SteamVR_Controller.Input(rightInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                {
+                    mostRecentTouchPad = rightInd;
+                    axis = SteamVR_Controller.Input((int)rightInd).GetAxis();
+                }
+                else
+                {
+                    //number that controllers will never index to
+                    mostRecentTouchPad = -99999999;
+                }
+            }
+            Debug.Log("axis: " + axis.y);
+        }
+
+        gas = axis.y;
+            
+
+
     }
 
 

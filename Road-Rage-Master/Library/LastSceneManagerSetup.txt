@@ -1,7 +1,4 @@
 sceneSetups:
-- path: Assets/Car Script basic/Demo.unity
+- path: Assets/Scenes/Demo.unity
   isLoaded: 1
   isActive: 1
-- path: Assets/test_wheel.unity
-  isLoaded: 0
-  isActive: 0
