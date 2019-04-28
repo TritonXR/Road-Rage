@@ -19,11 +19,11 @@ public class IdleChanger : MonoBehaviour
 	private AnimatorStateInfo previousState;	// ひとつ前のステート状態を保存する参照
 	public bool _random = false;				// ランダム判定スタートスイッチ
 	public float _threshold = 0.5f;				// ランダム判定の閾値
-	public float _interval = 2f;				// ランダム判定のインターバル
-	//private float _seed = 0.0f;					// ランダム判定用シード
-	
-
-
+	public float _interval = 2f;                // ランダム判定のインターバル
+                                                //private float _seed = 0.0f;					// ランダム判定用シード
+    public Dot_Truck_Controller car;
+    public float speedTh = 15;
+    
 	// Use this for initialization
 	void Start ()
 	{
@@ -39,19 +39,38 @@ public class IdleChanger : MonoBehaviour
 	void  Update ()
 	{
 		// ↑キー/スペースが押されたら、ステートを次に送る処理
-		if (Input.GetKeyDown ("up") || Input.GetButton ("Jump")) {
-			// ブーリアンNextをtrueにする
-			anim.SetBool ("Next", true);
+        // FAST TO SLOW
+        
+		if (currentState.IsTag("FAST")) {
+            // ブーリアンNextをtrueにする
+            if (car.crash)
+                anim.SetBool("Back", true);
+            else if (car.carVelocity.magnitude < speedTh)
+                anim.SetBool("Next", true);
 		}
-		
-		// ↓キーが押されたら、ステートを前に戻す処理
-				if (Input.GetKeyDown ("down")) {
-			// ブーリアンBackをtrueにする
-			anim.SetBool ("Back", true);
-		}
-		
-		// "Next"フラグがtrueの時の処理
-		if (anim.GetBool ("Next")) {
+
+        if (currentState.IsTag("SLOW"))
+        {
+            // ブーリアンNextをtrueにする
+            if (car.crash)
+                anim.SetBool("Next", true);
+            else if (car.carVelocity.magnitude >= speedTh)
+            {
+                anim.SetBool("Back", true);
+            }
+        }
+
+        if (currentState.IsTag("CRASH"))
+        {
+            // ブーリアンNextをtrueにする
+            car.crash = false;
+            if (car.carVelocity.magnitude >= speedTh && !car.crash)
+                anim.SetBool("Next", true);
+            else if (car.carVelocity.magnitude < speedTh && !car.crash)
+                anim.SetBool("Back", true);
+        }
+        // "Next"フラグがtrueの時の処理
+        if (anim.GetBool ("Next")) {
 			// 現在のステートをチェックし、ステート名が違っていたらブーリアンをfalseに戻す
 			currentState = anim.GetCurrentAnimatorStateInfo (0);
 			if (previousState.nameHash != currentState.nameHash) {
@@ -70,7 +89,6 @@ public class IdleChanger : MonoBehaviour
 			}
 		}
 	}
-
 
 	void OnGUI()
 	{

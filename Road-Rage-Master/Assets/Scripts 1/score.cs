@@ -6,13 +6,13 @@ public class score : MonoBehaviour {
     public GameObject carScript;
     int times = 0;
     public int pointValue = 1;
-
 	// Use this for initialization
 	void Start () {
 		
 	}
     private void OnCollisionEnter(Collision collision)
     {
+       
         if(times == 0)
         {
             Dot_Truck_Controller car;
