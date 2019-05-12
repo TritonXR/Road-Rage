@@ -31,6 +31,8 @@ public class SteamVR_Controller
 
 	public class Device
 	{
+        public float triggerVal = 0.0f;
+
 		public Device(uint i) { index = i; }
 		public uint index { get; private set; }
 
@@ -130,6 +132,7 @@ public class SteamVR_Controller
 					hairTriggerState = true;
 			}
 			hairTriggerLimit = hairTriggerState ? Mathf.Max(hairTriggerLimit, value) : Mathf.Min(hairTriggerLimit, value);
+            triggerVal = value;
 		}
 
 		public bool GetHairTrigger() { Update(); return hairTriggerState; }

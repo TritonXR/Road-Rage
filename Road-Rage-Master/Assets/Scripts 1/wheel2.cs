@@ -19,13 +19,15 @@ public class wheel2 : MonoBehaviour
     const int NONE_IND = 2;
     const float DEFAULT_ANGLE = 0.0f;
 
+    public bool emulate = false;
+
     public const float MIN_ANGLE = -540.0f;
     public const float MAX_ANGLE = 540.0f;
 
     private Collider ourCollider = null;
     public float rotationAngle = 0.0f;
     public float gas = 0.0f;
-    public Vector3 gas2 = new Vector3(0.0f,0.0f,0.0f);
+    public Vector3 gas2 = new Vector3(0.0f, 0.0f, 0.0f);
 
     public int mostRecentTouchPad;
 
@@ -41,13 +43,15 @@ public class wheel2 : MonoBehaviour
     public GameObject toPoint;
 
     private SteamVR_Controller.Device device, device_l, device_r;
-    private Vector3 pos_l, pos_r,gas_l,gas_r;
+    private Vector3 pos_l, pos_r, gas_l, gas_r;
     private bool[] triggerEntered = { false, false, false };
     //private bool[] proximity = { false, false, false };
     private bool[] primed = { false, false, false };
 
     //whatever IND this variable corresponds to is what controller is controlling the wheel
     private int controlling = NONE_IND;
+
+    private int forwardMode = 1;
 
     //counts which stage of rotation deg
     //private int rot_dec_cntr = 0;
@@ -131,7 +135,7 @@ public class wheel2 : MonoBehaviour
          * 1. Device is activated on trigger press and being within range
          * 2. If current device gets released, set the current device to the appropriate controller
          */
-        if (device_l.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[LEFT_IND])
+        if (device_l.GetPressDown(SteamVR_Controller.ButtonMask.Grip) && triggerEntered[LEFT_IND])
         {
             device = device_l;
             primed[LEFT_IND] = true;
@@ -140,7 +144,7 @@ public class wheel2 : MonoBehaviour
             _gas = gas_l;
 
         }
-        if (device_r.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[RIGHT_IND])
+        if (device_r.GetPressDown(SteamVR_Controller.ButtonMask.Grip) && triggerEntered[RIGHT_IND])
         {
             device = device_r;
             primed[RIGHT_IND] = true;
@@ -156,7 +160,7 @@ public class wheel2 : MonoBehaviour
          *      controlling the wheel
          *
          */
-        if (!device_l.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !triggerEntered[LEFT_IND])
+        if (!device_l.GetPress(SteamVR_Controller.ButtonMask.Grip) || !triggerEntered[LEFT_IND])
         {
             primed[LEFT_IND] = false;
             if (controlling == LEFT_IND)
@@ -175,7 +179,7 @@ public class wheel2 : MonoBehaviour
                 }
             }
         }
-        if (!device_r.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !triggerEntered[RIGHT_IND])
+        if (!device_r.GetPress(SteamVR_Controller.ButtonMask.Grip) || !triggerEntered[RIGHT_IND])
         {
             primed[RIGHT_IND] = false;
             if (controlling == RIGHT_IND)
@@ -195,10 +199,13 @@ public class wheel2 : MonoBehaviour
             }
         }
 
+        
         int ind1 = (int)controller_right.index;
         int ind2 = (int)controller_left.index;
+        SetDirectionMode(ind1, ind2);
+
         //SetGas(_gas);
-        SetGas(ind1, ind2);
+        SetGasTrigger(ind1, ind2);
         // device != null
         // if there is a current controller
         if (controlling != NONE_IND)
@@ -215,11 +222,11 @@ public class wheel2 : MonoBehaviour
             GetComponent<cakeslice.Outline>().enabled = true;
 
             _gas = (controlling == RIGHT_IND) ? gas_r : gas_l;
-            
+
             toPoint.transform.position = newPosRelative + this.transform.position;
 
             RotateGrab2To();
-          
+
         }
         else {
             //slowly move back towards the original wheel angle
@@ -233,7 +240,42 @@ public class wheel2 : MonoBehaviour
         //Debug.Log("local position: " + transform.localPosition);
 
         //Debug.Log("end update loop");
+        if (emulate) {
+            EmulatorControls();
+        }
+    }
 
+    void EmulatorControls() {
+        float rot = 0.0f; ;
+        if (Input.GetKeyDown("w")) {
+            gas = 1.0f;
+        }
+        if (Input.GetKeyDown("s"))
+        {
+            gas = -1.0f;
+        }
+        if (Input.GetKeyDown("a"))
+        {
+            rot = 30.0f;
+        }
+        if (Input.GetKeyDown("d"))
+        {
+            rot = -30.0f;
+        }
+        float newRotationAngle = rotationAngle + rot;
+
+        //adds limits to the rotation
+        if (newRotationAngle < MIN_ANGLE)
+        {
+            rotationAngle = MIN_ANGLE;
+
+        }
+        else if (newRotationAngle > MAX_ANGLE)
+        {
+            rotationAngle = MAX_ANGLE;
+
+        }
+        else rotationAngle = newRotationAngle;
     }
 
     /**
@@ -294,7 +336,7 @@ public class wheel2 : MonoBehaviour
 
             triggerEntered[ind] = false;
         }
-        
+
     }
 
 
@@ -309,7 +351,7 @@ public class wheel2 : MonoBehaviour
      */
     private void RotateGrab2To()
     {
-        
+
         // finding the rotation to rotate by
         //Quaternion rot = Quaternion.FromToRotation(grabPoint.transform.localPosition, to);
 
@@ -362,32 +404,32 @@ public class wheel2 : MonoBehaviour
             pos = pos - this.transform.forward;
             gas = pos.magnitude;
         }*/
-        if(pos.magnitude < 0.1f)        gas2 = -pos;
-        gas = (gas2 + 0.1f*this.transform.forward).magnitude - 0.1f;
+        if (pos.magnitude < 0.1f) gas2 = -pos;
+        gas = (gas2 + 0.1f * this.transform.forward).magnitude - 0.1f;
         gas2 = Vector3.Project(gas2, this.transform.forward);
         gas = gas * 10;
         print("gas " + gas);
-        
+
     }
 
     private void SetGas(int rightInd, int leftInd) {
         Vector2 axis = new Vector2();
-        if (SteamVR_Controller.Input((int)rightInd).GetPressDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+        if (SteamVR_Controller.Input((int)rightInd).GetPressDown(SteamVR_Controller.ButtonMask.Grip)) {
             mostRecentTouchPad = rightInd;
         }
-        else if (SteamVR_Controller.Input((int)leftInd).GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
+        else if (SteamVR_Controller.Input((int)leftInd).GetPressDown(SteamVR_Controller.ButtonMask.Grip))
         {
             mostRecentTouchPad = leftInd;
         }
 
         if (mostRecentTouchPad == rightInd)
         {
-            if (SteamVR_Controller.Input(rightInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+            if (SteamVR_Controller.Input(rightInd).GetPress(SteamVR_Controller.ButtonMask.Grip))
             {
                 axis = SteamVR_Controller.Input((int)rightInd).GetAxis();
             }
             else {
-                if (SteamVR_Controller.Input(leftInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                if (SteamVR_Controller.Input(leftInd).GetPress(SteamVR_Controller.ButtonMask.Grip))
                 {
                     mostRecentTouchPad = leftInd;
                     axis = SteamVR_Controller.Input((int)leftInd).GetAxis();
@@ -401,13 +443,13 @@ public class wheel2 : MonoBehaviour
 
         }
         else if (mostRecentTouchPad == leftInd) {
-            if (SteamVR_Controller.Input(leftInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+            if (SteamVR_Controller.Input(leftInd).GetPress(SteamVR_Controller.ButtonMask.Grip))
             {
                 axis = SteamVR_Controller.Input((int)leftInd).GetAxis();
             }
             else
             {
-                if (SteamVR_Controller.Input(rightInd).GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+                if (SteamVR_Controller.Input(rightInd).GetPress(SteamVR_Controller.ButtonMask.Grip))
                 {
                     mostRecentTouchPad = rightInd;
                     axis = SteamVR_Controller.Input((int)rightInd).GetAxis();
@@ -422,9 +464,28 @@ public class wheel2 : MonoBehaviour
         }
 
         gas = axis.y;
-            
 
 
+
+    }
+    private void SetGasTrigger(int rightInd, int leftInd)
+    {
+        Vector2 axis = new Vector2();
+        gas = forwardMode * SteamVR_Controller.Input((int)rightInd).triggerVal;
+
+
+
+    }
+    private void SetDirectionMode(int rightInd, int leftInd) {
+        Vector2 axis = new Vector2();
+
+        if (SteamVR_Controller.Input((int)rightInd).GetPressDown(SteamVR_Controller.ButtonMask.Touchpad)) {
+            axis = SteamVR_Controller.Input((int)rightInd).GetAxis();
+            Debug.Log("axis y " + axis.y);
+            forwardMode = (axis.y > 0.0f) ? 1 : -1;
+        }
+        
+       
     }
 
 
