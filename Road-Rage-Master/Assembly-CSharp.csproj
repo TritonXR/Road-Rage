@@ -61,6 +61,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Joycon\JoyconDemo.cs" />
+    <Compile Include="Assets\Joycon\JoyconLib_scripts\HIDapi.cs" />
+    <Compile Include="Assets\Joycon\JoyconLib_scripts\Joycon.cs" />
+    <Compile Include="Assets\Joycon\JoyconLib_scripts\JoyconManager.cs" />
+    <Compile Include="Assets\Joycon\TestCarAccel.cs" />
     <Compile Include="Assets\OutlineEffect\Demo\MaterialSwitcher.cs" />
     <Compile Include="Assets\OutlineEffect\Demo\OutlineAnimation.cs" />
     <Compile Include="Assets\OutlineEffect\Demo\Rotate.cs" />
@@ -439,14 +444,14 @@
     <Reference Include="UnityEngine.SpatialTracking">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.13f1/Editor/Data/UnityExtensions/Unity/UnitySpatialTracking/RuntimeEditor/UnityEngine.SpatialTracking.dll</HintPath>
     </Reference>
+    <Reference Include="EasyRoads3Dv3">
+      <HintPath>D:/NOTNOT RagingRoad/Road-Rage/Road-Rage-Master/Assets/EasyRoads3D/lib/EasyRoads3Dv3.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.Analytics">
       <HintPath>C:/Users/bel058/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.analytics@2.0.16/UnityEngine.Analytics.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.StandardEvents">
       <HintPath>C:/Users/bel058/AppData/Local/Unity/cache/packages/packages.unity.com/com.unity.standardevents@1.0.13/UnityEngine.StandardEvents.dll</HintPath>
-    </Reference>
-    <Reference Include="EasyRoads3Dv3">
-      <HintPath>D:/NOTNOT RagingRoad/Road-Rage/Road-Rage-Master/Assets/EasyRoads3D/lib/EasyRoads3Dv3.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2018.2.13f1/Editor/Data/MonoBleedingEdge/lib/mono/unity/mscorlib.dll</HintPath>
@@ -480,6 +485,10 @@
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
       <Project>{64ADCFE9-2CCC-71AE-4E96-C1BF4BD8A75A}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
+    <ProjectReference Include="JoyConLib.csproj">
+      <Project>{78DDAEFF-6BFE-3D6C-904E-BFDB05E7271F}</Project>
+      <Name>JoyConLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

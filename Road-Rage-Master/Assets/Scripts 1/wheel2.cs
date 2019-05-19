@@ -53,10 +53,15 @@ public class wheel2 : MonoBehaviour
 
     private int forwardMode = 1;
 
+    private bool readGas;
+
     //counts which stage of rotation deg
     //private int rot_dec_cntr = 0;
+    public IEnumerator DelayGas(int time) {
+        yield return new WaitForSeconds(time);
+        readGas = true;
 
-
+    }
 
     public float exitDistance;
 
@@ -73,6 +78,11 @@ public class wheel2 : MonoBehaviour
         Debug.Log("Left device index: " + (int)controller_left.index);
         Debug.Log("Right device index: " + (int)controller_right.index);
         GetComponent<cakeslice.Outline>().enabled = !GetComponent<cakeslice.Outline>().enabled;
+
+
+        readGas = false;
+        StartCoroutine(DelayGas(2));
+
     }
 
     /**
@@ -135,7 +145,7 @@ public class wheel2 : MonoBehaviour
          * 1. Device is activated on trigger press and being within range
          * 2. If current device gets released, set the current device to the appropriate controller
          */
-        if (device_l.GetPressDown(SteamVR_Controller.ButtonMask.Grip) && triggerEntered[LEFT_IND])
+        if (device_l.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[LEFT_IND])
         {
             device = device_l;
             primed[LEFT_IND] = true;
@@ -144,7 +154,7 @@ public class wheel2 : MonoBehaviour
             _gas = gas_l;
 
         }
-        if (device_r.GetPressDown(SteamVR_Controller.ButtonMask.Grip) && triggerEntered[RIGHT_IND])
+        if (device_r.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && triggerEntered[RIGHT_IND])
         {
             device = device_r;
             primed[RIGHT_IND] = true;
@@ -160,7 +170,7 @@ public class wheel2 : MonoBehaviour
          *      controlling the wheel
          *
          */
-        if (!device_l.GetPress(SteamVR_Controller.ButtonMask.Grip) || !triggerEntered[LEFT_IND])
+        if (!device_l.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !triggerEntered[LEFT_IND])
         {
             primed[LEFT_IND] = false;
             if (controlling == LEFT_IND)
@@ -179,7 +189,7 @@ public class wheel2 : MonoBehaviour
                 }
             }
         }
-        if (!device_r.GetPress(SteamVR_Controller.ButtonMask.Grip) || !triggerEntered[RIGHT_IND])
+        if (!device_r.GetPress(SteamVR_Controller.ButtonMask.Trigger) || !triggerEntered[RIGHT_IND])
         {
             primed[RIGHT_IND] = false;
             if (controlling == RIGHT_IND)
@@ -205,7 +215,12 @@ public class wheel2 : MonoBehaviour
         SetDirectionMode(ind1, ind2);
 
         //SetGas(_gas);
-        SetGasTrigger(ind1, ind2);
+        //SetGasTrigger(ind1, ind2);
+        if (readGas) {
+            SetGasLabo();
+
+        }
+
         // device != null
         // if there is a current controller
         if (controlling != NONE_IND)
@@ -409,6 +424,22 @@ public class wheel2 : MonoBehaviour
         gas2 = Vector3.Project(gas2, this.transform.forward);
         gas = gas * 10;
         print("gas " + gas);
+
+    }
+    private void SetGasLabo()
+    {
+        Quaternion Rotation;
+        double magnitude_labo;
+        Rotation = JoyconDemo.orientation;
+        magnitude_labo = -(Rotation.x - 0.888) / 1.776;
+        gas = (float)magnitude_labo * forwardMode;
+        if (magnitude_labo < 0.02)
+        {
+            gas = 0;
+        }
+        print("\nGGGGAGAGAAG\n");
+        print(gas);
+        //print(forwardMode);
 
     }
 
