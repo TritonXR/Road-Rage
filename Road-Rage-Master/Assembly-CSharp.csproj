@@ -66,6 +66,7 @@
     <Compile Include="Assets\Joycon\JoyconLib_scripts\Joycon.cs" />
     <Compile Include="Assets\Joycon\JoyconLib_scripts\JoyconManager.cs" />
     <Compile Include="Assets\Joycon\TestCarAccel.cs" />
+    <Compile Include="Assets\Leave.cs" />
     <Compile Include="Assets\OutlineEffect\Demo\MaterialSwitcher.cs" />
     <Compile Include="Assets\OutlineEffect\Demo\OutlineAnimation.cs" />
     <Compile Include="Assets\OutlineEffect\Demo\Rotate.cs" />

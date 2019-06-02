@@ -79,7 +79,6 @@ public class wheel2 : MonoBehaviour
         Debug.Log("Right device index: " + (int)controller_right.index);
         GetComponent<cakeslice.Outline>().enabled = !GetComponent<cakeslice.Outline>().enabled;
 
-
         readGas = false;
         StartCoroutine(DelayGas(2));
 
@@ -436,9 +435,18 @@ public class wheel2 : MonoBehaviour
         if (magnitude_labo < 0.02)
         {
             gas = 0;
+            // make controllers rumble (normal)
+            SteamVR_Controller.Input((int)controller_left.index).TriggerHapticPulse(500);
+            SteamVR_Controller.Input((int)controller_right.index).TriggerHapticPulse(500);
         }
-        print("\nGGGGAGAGAAG\n");
-        print(gas);
+
+        // make controllers rumble (intense)
+        if (magnitude_labo > 0.02) {
+            double rumble = magnitude_labo * 2000;
+            SteamVR_Controller.Input((int)controller_left.index).TriggerHapticPulse((ushort)rumble);
+            SteamVR_Controller.Input((int)controller_right.index).TriggerHapticPulse((ushort)rumble);
+        }
+       // print(gas);
         //print(forwardMode);
 
     }

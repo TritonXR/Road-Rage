@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class score : MonoBehaviour {
     public GameObject carScript;
+
     int times = 0;
     public int pointValue = 1;
 	// Use this for initialization
 	void Start () {
-		
-	}
+ 
+    }
     private void OnCollisionEnter(Collision collision)
     {
        
@@ -23,9 +24,8 @@ public class score : MonoBehaviour {
                 Debug.Log("POINTS: " + carScript.GetComponent<Dot_Truck_Controller>().points);
                 Debug.Log("position: " + collision.transform.position);
             }
-            
-        }
         
+        }
         
     }
     // Update is called once per frame

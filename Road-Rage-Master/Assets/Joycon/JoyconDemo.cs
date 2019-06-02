@@ -12,6 +12,7 @@ public class JoyconDemo : MonoBehaviour {
     public Vector3 accel;
     public int jc_ind = 0;
     public static Quaternion orientation;
+  
 
     void Start ()
     {
@@ -19,7 +20,8 @@ public class JoyconDemo : MonoBehaviour {
         accel = new Vector3(0, 0, 0);
         // get the public Joycon array attached to the JoyconManager in scene
         joycons = JoyconManager.Instance.j;
-		if (joycons.Count < jc_ind+1){
+
+        if (joycons.Count < jc_ind+1){
 			Destroy(gameObject);
 		}
 	}
@@ -30,7 +32,8 @@ public class JoyconDemo : MonoBehaviour {
 		if (joycons.Count > 0)
         {
 			Joycon j = joycons [jc_ind];
-			// GetButtonDown checks if a button has been pressed (not held)
+
+            // GetButtonDown checks if a button has been pressed (not held)
             if (j.GetButtonDown(Joycon.Button.SHOULDER_2))
             {
 				Debug.Log ("Shoulder button 2 pressed");
